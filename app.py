@@ -48,7 +48,7 @@ def emit_message(msg):
 @socketio.on('/topic/private')
 def test(msg):
     print(f"Custom message: {msg}")
-    socketio.emit('/topic/private', {"data": "dit cu python"}, broadcast=True)
+    socketio.emit('/topic/private', {"data": "test"}, broadcast=True)
 # Run the application
 if __name__ == '__main__':
     socketio.run(app, host="localhost", port=8080, debug=True)
