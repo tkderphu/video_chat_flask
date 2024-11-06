@@ -1,9 +1,6 @@
 from flask import request, jsonify, Blueprint
 from service import auth_service
 auth_bp = Blueprint('auth', __name__, url_prefix="/api/v1/users/auth")
-
-
-# from utils import utils
 @auth_bp.route('/login', methods=['POST'])
 def login():
     loginRequest = request.get_json()

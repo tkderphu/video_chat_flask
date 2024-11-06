@@ -49,6 +49,11 @@ def emit_message(msg):
 def test(msg):
     print(f"Custom message: {msg}")
     socketio.emit('/topic/private', {"data": "dit cu python"}, broadcast=True)
-# Run the application
+
+
+@socketio.on('/signal')
+def establish_video(signal):
+    socketio.emit('/topic/room', signal)
+
 if __name__ == '__main__':
     socketio.run(app, host="localhost", port=8080, debug=True)

@@ -49,17 +49,25 @@ def create_message(message_request):
         # socketio.emit('response', {'data': f'Message received: {'data'}'}, namespace='/')
     return APIResponse('', 200, 0, message.to_dict()).to_dict();
 def create_conversation(conversation_request):
-    conversation = Conversation()
-    conversation.name=conversation_request['name'];
-    conversation.conversation_type = 'PUBLIC'
+    conversation = Conversation(conversation_request['name'], 'PUBLIC')
     db.session.add(conversation)
+    db.session.commit()
     for userId in conversation_request['userIds']:
         participation = Participation(
             user_id=userId,
            conversation_id= conversation.id
         )
         db.session.add(participation)
+    message = Message(f'----->User {utils.user_login.get("fullName")} created group <-----',
+                      'TEXT',
+                      utils.user_login.get('id'),
+                      conversation.id)
+    db.session.add(message)
     db.session.commit()
+
+    for id in conversation_request['userIds']:
+        socketio.emit("/topic/private/conversation/user/" + str(id), conversation.to_dict(), broadcast=True)
+
     return APIResponse('', 200, 0, conversation.to_dict_2(False)).to_dict();
 
 def get_all_conversation_of_current_user():
@@ -77,3 +85,23 @@ def get_all_messages_of_conversation(conversation_id):
         msg.append(m.to_dict())
     return APIResponse('', 200, 0, msg).to_dict()
 
+
+def findPrivateConversation(user_id):
+    conversations = Conversation.query.filter_by(conversation_type='PRIVATE')
+    res = None
+    for conversation in conversations:
+        if (conversation.participants[0].user_id + conversation.participants[1].user_id)  ==int( user_id )+ int(utils.user_login.get('id')):
+            res = conversation
+            break
+    if res == None:
+        return APIResponse(None, 400, 0, {}).to_dict();
+    else:
+        return APIResponse(None, 200, 0, res).to_dict();
+def checkConversationContainsCurrentUser(conversation_id):
+    participations = Participation.query.filter_by(conversation_id=conversation_id).all();
+    api = APIResponse('', 200, 0, False)
+    for participation in participations:
+        if participation.user.id == utils.user_login.get('id'):
+            api.data = True
+            break
+    return api.to_dict()

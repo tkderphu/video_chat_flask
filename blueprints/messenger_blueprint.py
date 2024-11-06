@@ -25,13 +25,19 @@ def getAllMessageOfConversation(conversation_id):
 
 @messenger_bp.route("/conversations", methods=['POST'])
 def createConversation():
-    utils.set_context_user_login(request)
+    if utils.set_context_user_login(request) is None:
+        return utils.exception_message
     return messenger_service.create_conversation(request.get_json());
 
 @messenger_bp.route("/conversations/users/<user_id>", methods=['GET'])
 def getPrivateConversation(user_id):
-    return None
+    if utils.set_context_user_login(request) is None:
+        return utils.exception_message
+    return messenger_service.findPrivateConversation(user_id);
 
-@messenger_bp.route("/conversations/{conversation_id/checkUser",methods= ['POST'])
+@messenger_bp.route("/conversations/<conversation_id>/checkUser",methods= ['GET'])
 def checkWhetherConversationContainsCurrentUser(conversation_id):
-    return None
+    if utils.set_context_user_login(request) is None:
+        return utils.exception_message
+    return messenger_service.checkConversationContainsCurrentUser(conversation_id)
+
