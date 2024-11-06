@@ -48,8 +48,6 @@ def emit_message(msg):
 @socketio.on('/topic/private')
 def test(msg):
     print(f"Custom message: {msg}")
-    socketio.emit('/topic/private', {"data": "dit cu python"}, broadcast=True)
-
 
 @socketio.on('/signal')
 def establish_video(signal):
