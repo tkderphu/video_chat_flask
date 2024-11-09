@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 CORS(app)  # Allow only frontend's origin
-socketio.init_app(app, cors_allowed_origins="http://localhost:4200")
+socketio.init_app(app, cors_allowed_origins=["https://viosmash.site", "http://localhost:4200", "http://viosmash.site"])
 db.init_app(app)
 
 # Register blueprints
@@ -35,4 +35,4 @@ def establish_video(signal):
     socketio.emit('/topic/room', signal)
 
 if __name__ == '__main__':
-    socketio.run(app, host="localhost", port=8080, debug=True)
+    socketio.run(app, host="0.0.0.0", port=8080, debug=True)
