@@ -90,13 +90,13 @@ def findPrivateConversation(user_id):
     conversations = Conversation.query.filter_by(conversation_type='PRIVATE')
     res = None
     for conversation in conversations:
-        if (conversation.participants[0].user_id + conversation.participants[1].user_id)  ==int( user_id )+ int(utils.user_login.get('id')):
+        if (conversation.participants[0].user_id + conversation.participants[1].user_id)  == int( user_id )+ int(utils.user_login.get('id')):
             res = conversation
             break
     if res == None:
         return APIResponse(None, 400, 0, {}).to_dict();
     else:
-        return APIResponse(None, 200, 0, res).to_dict();
+        return APIResponse(None, 200, 0, res.to_dict()).to_dict();
 def checkConversationContainsCurrentUser(conversation_id):
     participations = Participation.query.filter_by(conversation_id=conversation_id).all();
     api = APIResponse('', 200, 0, False)
